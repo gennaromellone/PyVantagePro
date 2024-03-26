@@ -122,8 +122,11 @@ class VantagePro2(object):
             LOGGER.info("try send : %s" % bytes_to_hex(data))
             self.link.write(data)
         else:
-            LOGGER.info("try send : %s" % data)
-            self.link.write("%s\n" % data)
+            try:
+                LOGGER.info("try send : %s" % data)
+                self.link.write("%s\n" % data)
+            except:
+                print("not sent")
         if wait_ack is None:
             return True
         ack = self.link.read(len(wait_ack), timeout=timeout)
@@ -167,8 +170,12 @@ class VantagePro2(object):
     def get_current_data(self):
         '''Returns the real-time data as a `Dict`.'''
         self.wake_up()
+
         self.send("LOOP 1", self.ACK)
+
         current_data = self.link.read(99)
+
+        self.link.empty_socket()
         if self.RevB:
             return LoopDataParserRevB(current_data, datetime.now())
         else:
@@ -330,6 +337,10 @@ class VantagePro2(object):
                 self.link.write(self.NACK)
                 raise BadCRCException()
             return dump
+            
+    def close(self):
+        self.link.close()
+        return True
 
     def _check_revision(self):
         '''Check firmware date and get data format revision.'''
