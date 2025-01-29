@@ -45,6 +45,20 @@ def getinfo_cmd(args, vp):
     info += f"Diagnostics: {vp.diagnostics}\n"
     print(info)
 
+def getbar_cmd(args, vp):
+    """Displays of the current barometer calibration parameters in text."""
+    data = vp.getbar()
+
+    info = f"Bar. measurement (Hg): {data['bar']}\n"
+    info += f"Elevation (ft): {data['elevation']}\n"
+    info += f"Dew Point (F): {data['dew_point']}\n"
+    info += f"Virtual Temp. (F): {data['virtual_temp']}\n"
+    info += f"C (Humidity correction factor): {data['c']}\n"
+    info += f"R (Humidity correction ratio): {data['r']}\n"
+    info += f"BarCal (Correction ratio): {data['barcal']}\n"
+    info += f"Gain (Calibration values): {data['gain']}\n"
+    info += f"Offset (Calibration values): {data['offset']}\n"
+    print(info)
 
 def getdata_cmd(args, vp):
     """Get real-time data command."""
@@ -165,6 +179,11 @@ def main():
     get_cmd_parser('getinfo', subparsers,
                    help='Print VantagePro 2 information.',
                    func=getinfo_cmd)
+
+    # getbarcommand
+    get_cmd_parser('getbar', subparsers,
+                   help='Current Barometer calibration parameters',
+                   func=getbar_cmd)
 
     # getarchives command
     subparser = get_cmd_parser('getarchives', subparsers,

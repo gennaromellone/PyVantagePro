@@ -169,12 +169,25 @@ class VantagePro2(object):
 
     def getperiod(self):
         '''Returns number of minutes in the archive period.'''
-        return struct.unpack(b'B', self.read_from_eeprom("2D", 1))[0]
+        return self.archive_period
 
     def setperiod(self, dperiod):
         '''Set the given `dperiod` on the station. Values are 1, 5, 10, 15, 30, 60, and 120'''
         self.wake_up()
         self.send(f"SETPER {dperiod}", self.OK)
+
+    def getbar(self):
+        self.wake_up()
+        self.send("BARDATA", self.OK)
+        data = self.link.read(97)
+        return {
+            key.lower().replace(" ", "_"): int(value) 
+            for line in data.splitlines() if line.strip()
+            for key, value in [line.rsplit(" ", 1)]
+        }
+        
+    def getdiagnostics(self):
+        return self.diagnostics
 
     def get_current_data(self):
         '''Returns the real-time data as a `Dict`.'''
@@ -327,7 +340,7 @@ class VantagePro2(object):
         '''Return the Console Diagnostics report. (RXCHECK command)'''
         self.wake_up()
         self.send("RXCHECK", self.OK)
-        data = self.link.read().strip('\n\r').split(' ')
+        data = self.link.read(22).strip('\n\r').split(' ')
         data = [int(i) for i in data]
         return dict(total_received=data[0], total_missed=data[1],
                     resyn=data[2], max_received=data[3],
