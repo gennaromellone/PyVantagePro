@@ -167,6 +167,11 @@ class VantagePro2(object):
         self.send("SETTIME", self.ACK)
         self.send(pack_datetime(dtime), self.ACK)
 
+    def setperiod(self, dperiod):
+        '''Set the given `dperiod` on the station. Values are 1, 5, 10, 15, 30, 60, and 120'''
+        self.wake_up()
+        self.send(f"SETPER {dperiod}", self.OK)
+
     def get_current_data(self):
         '''Returns the real-time data as a `Dict`.'''
         self.wake_up()
