@@ -125,14 +125,23 @@ def get_cmd_parser(cmd, subparsers, help, func):
     parser.set_defaults(func=func)
     return parser
 
+def getperiod_cmd(args, vp):
+    """Getperiod command."""
+    print(f"{vp.getperiod()}")
 
+def setperiod_cmd(args, vp):
+    """Setperiod command."""
+    old_period = vp.getperiod()
+    vp.setperiod(args.period)
+    print(f"Old value: {old_period}")
+    print(f"New value: {args.period}")
 
 def main():
     """Parse command-line arguments and execute VP2 command."""
 
     parser = argparse.ArgumentParser(
         prog='pyvantagepro',
-        description='VantagePro 2 communication tools'
+        description='VantagePro 2 communication tools (New version)'
     )
     parser.add_argument(
         '--version', action='version',
@@ -190,6 +199,17 @@ def main():
     subparser.add_argument('--delim', action="store", default=",",
                            help='CSV char delimiter')
     subparser.add_argument('db', action="store", help='The CSV file database')
+
+    # getperiod command
+    get_cmd_parser('getperiod', subparsers,
+                   help='Print the current archive period time of the station.',
+                   func=getperiod_cmd)
+
+    # setperiod command
+    subparser = get_cmd_parser('setperiod', subparsers,
+                               help='Set the given archive time period argument on the station.',
+                               func=setperiod_cmd)
+    subparser.add_argument('period', help='The chosen period value ( Values are 1, 5, 10, 15, 30, 60, and 120)')
 
     # Parse argv arguments
     args = parser.parse_args()

@@ -167,6 +167,10 @@ class VantagePro2(object):
         self.send("SETTIME", self.ACK)
         self.send(pack_datetime(dtime), self.ACK)
 
+    def getperiod(self):
+        '''Returns number of minutes in the archive period.'''
+        return struct.unpack(b'B', self.read_from_eeprom("2D", 1))[0]
+
     def setperiod(self, dperiod):
         '''Set the given `dperiod` on the station. Values are 1, 5, 10, 15, 30, 60, and 120'''
         self.wake_up()
