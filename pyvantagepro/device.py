@@ -181,11 +181,11 @@ class VantagePro2(object):
         self.send("BARDATA", self.OK)
         data = self.link.read(97)
         return {
-            key.lower().replace(" ", "_"): int(value) 
+            key.lower().replace(" ", "_"): value
             for line in data.splitlines() if line.strip()
             for key, value in [line.rsplit(" ", 1)]
         }
-        
+
     def getdiagnostics(self):
         return self.diagnostics
 
